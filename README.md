@@ -1,4 +1,5 @@
 # mcp-ready ✈️
+![CI](https://github.com/Akshay7273/mcp-ready/actions/workflows/ci.yml/badge.svg)
 
 > Is your MCP server ready for the **2026-07-28 spec**? Find breaking changes and deprecated features — before they find you.
 
@@ -13,6 +14,16 @@ npx mcp-ready .
 ```
 
 That's it. Point it at any MCP server repo and read the report.
+
+## Use in CI (GitHub Action)
+
+```yaml
+- uses: Akshay7273/mcp-ready@main
+  with:
+    path: "."
+```
+
+Fails the build when 🔴 breaking findings are detected (exit code 1).
 
 ## What it checks
 

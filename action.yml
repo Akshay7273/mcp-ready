@@ -1,0 +1,18 @@
+name: "mcp-ready"
+description: "Check whether your MCP server is ready for the 2026-07-28 MCP spec revision"
+branding:
+  icon: "check-circle"
+  color: "purple"
+inputs:
+  path:
+    description: "Directory to scan"
+    required: false
+    default: "."
+runs:
+  using: "composite"
+  steps:
+    - name: Run mcp-ready
+      shell: bash
+      env:
+        SCAN_PATH: ${{ inputs.path }}
+      run: npx --yes mcp-ready@latest "$SCAN_PATH"
