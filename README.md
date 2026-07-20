@@ -10,8 +10,10 @@ The Model Context Protocol's 2026-07-28 revision is its largest ever: a stateles
 ## Quick start
 
 ```
-npx mcp-ready .
+npx @akshay7273/mcp-ready .
 ```
+
+> Installed globally? The command is just `mcp-ready`.
 
 That's it. Point it at any MCP server repo and read the report.
 

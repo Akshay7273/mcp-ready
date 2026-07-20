@@ -15,4 +15,4 @@ runs:
       shell: bash
       env:
         SCAN_PATH: ${{ inputs.path }}
-      run: npx --yes mcp-ready@latest "$SCAN_PATH"
+      run: npx --yes @akshay7273/mcp-ready@latest "$SCAN_PATH"

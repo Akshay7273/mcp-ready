@@ -1,19 +1,34 @@
 {
-  "name": "mcp-ready",
+  "name": "@akshay7273/mcp-ready",
   "version": "0.1.0",
-  "description": "Preflight checks for MCP servers: find breaking changes and deprecated features before the 2026-07-28 spec lands.",
+  "description": "Check whether your MCP server is ready for the MCP 2026-07-28 spec revision — breaking changes, deprecated features, migration hints.",
   "type": "module",
-  "bin": { "mcp-ready": "./dist/cli.js" },
-  "files": ["dist", "README.md", "LICENSE"],
+  "bin": {
+    "mcp-ready": "./dist/cli.js"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
   "scripts": {
     "build": "tsc",
     "dev": "tsx src/cli.ts",
     "test": "vitest run",
     "prepublishOnly": "npm run build"
   },
-  "keywords": ["mcp", "model-context-protocol", "migration", "linter", "cli", "2026-07-28"],
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "migration",
+    "linter",
+    "cli",
+    "2026-07-28"
+  ],
   "license": "MIT",
-  "engines": { "node": ">=20" },
+  "engines": {
+    "node": ">=20"
+  },
   "dependencies": {
     "fast-glob": "^3.3.2",
     "picocolors": "^1.0.0"
@@ -23,5 +38,13 @@
     "tsx": "^4.7.0",
     "typescript": "^5.4.0",
     "vitest": "^1.6.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Akshay7273/mcp-ready.git"
+  },
+  "homepage": "https://github.com/Akshay7273/mcp-ready#readme",
+  "bugs": {
+    "url": "https://github.com/Akshay7273/mcp-ready/issues"
   }
 }
