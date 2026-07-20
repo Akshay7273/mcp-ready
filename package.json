@@ -1,0 +1,27 @@
+{
+  "name": "mcp-preflight",
+  "version": "0.1.0",
+  "description": "Preflight checks for MCP servers: find breaking changes and deprecated features before the 2026-07-28 spec lands.",
+  "type": "module",
+  "bin": { "mcp-preflight": "./dist/cli.js" },
+  "files": ["dist", "README.md", "LICENSE"],
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsx src/cli.ts",
+    "test": "vitest run",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": ["mcp", "model-context-protocol", "migration", "linter", "cli", "2026-07-28"],
+  "license": "MIT",
+  "engines": { "node": ">=20" },
+  "dependencies": {
+    "fast-glob": "^3.3.2",
+    "picocolors": "^1.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "tsx": "^4.7.0",
+    "typescript": "^5.4.0",
+    "vitest": "^1.6.0"
+  }
+}
