@@ -1,15 +1,15 @@
-# mcp-preflight ✈️
+# mcp-ready ✈️
 
 > Is your MCP server ready for the **2026-07-28 spec**? Find breaking changes and deprecated features — before they find you.
 
 🚧 **v0.1 in active development** — shipping before the spec goes final on **July 28, 2026**.
 
-The Model Context Protocol's 2026-07-28 revision is its largest ever: a stateless core, a new `server/discover` handshake, deprecated roots/sampling/logging, new SDK major versions, and a changed error code. `mcp-preflight` scans your MCP server repo — **TypeScript, Python, Go, or C#** — and tells you exactly what needs attention. In seconds. Zero config.
+The Model Context Protocol's 2026-07-28 revision is its largest ever: a stateless core, a new `server/discover` handshake, deprecated roots/sampling/logging, new SDK major versions, and a changed error code. `mcp-ready` scans your MCP server repo — **TypeScript, Python, Go, or C#** — and tells you exactly what needs attention. In seconds. Zero config.
 
 ## Quick start
 
 ```
-npx mcp-preflight .
+npx mcp-ready .
 ```
 
 That's it. Point it at any MCP server repo and read the report.
@@ -42,7 +42,7 @@ npx @modelcontextprotocol/codemod@beta v1-to-v2 .
 
 See also the official guides: [Upgrading from v1 to v2](https://github.com/modelcontextprotocol/typescript-sdk/blob/main/docs/migration/upgrade-to-v2.md) · [Adopting the 2026-07-28 revision](https://github.com/modelcontextprotocol/typescript-sdk/blob/main/docs/migration/support-2026-07-28.md) · [Python migration guide](https://py.sdk.modelcontextprotocol.io/v2/migration/)
 
-`mcp-preflight` complements these tools — it tells you *what* needs attention across all four SDK languages; they help you *fix* it.
+`mcp-ready` complements these tools — it tells you *what* needs attention across all four SDK languages; they help you *fix* it.
 
 ## Roadmap
 

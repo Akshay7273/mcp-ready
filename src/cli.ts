@@ -6,10 +6,10 @@ const VERSION = "0.1.0"
 
 function printHelp(): void {
   console.log(`
-mcp-preflight — preflight checks for MCP servers
+mcp-ready — preflight checks for MCP servers
 
 Usage:
-  mcp-preflight [path] [options]
+  mcp-ready [path] [options]
 
 Arguments:
   path            Directory to scan (default: current directory)
@@ -33,7 +33,7 @@ async function main(): Promise<void> {
 
   const target = args.find((a) => !a.startsWith("-")) ?? "."
 
-  console.log(pc.bold(`\n\u2708  mcp-preflight v${VERSION}`))
+  console.log(pc.bold(`\n\u2708  mcp-ready v${VERSION}`))
   console.log(pc.dim(`Scanning "${target}" for MCP SDK usage...\n`))
 
   const ctx = await buildScanContext(target)
@@ -59,7 +59,7 @@ async function main(): Promise<void> {
 
 main().catch((err) => {
   console.error(
-    pc.red(`mcp-preflight failed: ${err instanceof Error ? err.message : String(err)}`),
+    pc.red(`mcp-ready failed: ${err instanceof Error ? err.message : String(err)}`),
   )
   process.exit(1)
 })

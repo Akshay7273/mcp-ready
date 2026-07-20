@@ -1,9 +1,9 @@
 {
-  "name": "mcp-preflight",
+  "name": "mcp-ready",
   "version": "0.1.0",
   "description": "Preflight checks for MCP servers: find breaking changes and deprecated features before the 2026-07-28 spec lands.",
   "type": "module",
-  "bin": { "mcp-preflight": "./dist/cli.js" },
+  "bin": { "mcp-ready": "./dist/cli.js" },
   "files": ["dist", "README.md", "LICENSE"],
   "scripts": {
     "build": "tsc",
