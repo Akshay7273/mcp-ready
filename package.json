@@ -39,7 +39,7 @@
     "picocolors": "^1.0.0"
   },
   "devDependencies": {
-    "@types/node": "^20.11.0",
+    "@types/node": "^26.1.2",
     "tsx": "^4.7.0",
     "typescript": "^5.4.0",
     "vitest": "^4.1.10"
