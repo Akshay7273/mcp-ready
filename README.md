@@ -3,8 +3,8 @@
 
 > Is your MCP server ready for the **2026-07-28 spec**? Find breaking changes and deprecated features — before they find you.
 
-🚧 **v0.3 release candidate** — SARIF code scanning, checked-in baselines, scoped suppressions,
-and cross-language validation are complete.
+**v0.3 is available now** — with SARIF code scanning, checked-in baselines, scoped suppressions,
+and cross-language validation.
 
 The Model Context Protocol's 2026-07-28 revision is its largest ever: a stateless core, a new `server/discover` capability-discovery method, deprecated roots/sampling/logging, new SDK major versions, and changed error handling. `mcp-ready` scans your MCP server repo — **TypeScript, Python, Go, or C#** — and tells you exactly what needs attention. In seconds. Zero config.
 
