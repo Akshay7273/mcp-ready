@@ -1,5 +1,6 @@
 import pc from "picocolors"
-import type { Finding, Severity } from "./types.js"
+import type { FailOn } from "./cli-options.js"
+import type { Finding, SdkInfo, Severity } from "./types.js"
 
 const ORDER: Severity[] = ["breaking", "deprecated", "info"]
 
@@ -87,4 +88,59 @@ export function renderMarkdown(findings: Finding[], target: string): string {
 
 export function hasBreaking(findings: Finding[]): boolean {
   return findings.some((f) => f.severity === "breaking")
+}
+
+export function shouldFail(findings: Finding[], failOn: FailOn): boolean {
+  if (failOn === "none") return false
+  if (failOn === "deprecated") {
+    return findings.some((finding) =>
+      ["breaking", "deprecated"].includes(finding.severity),
+    )
+  }
+  return hasBreaking(findings)
+}
+
+export type JsonReport = {
+  schemaVersion: "1"
+  tool: { name: "mcp-ready"; version: string }
+  specification: "2026-07-28"
+  target: string
+  generatedAt: string
+  sdks: SdkInfo[]
+  summary: Record<Severity, number> & { total: number }
+  findings: Finding[]
+}
+
+export function buildJsonReport(
+  findings: Finding[],
+  target: string,
+  sdks: SdkInfo[],
+  version: string,
+): JsonReport {
+  const summary = {
+    breaking: findings.filter((finding) => finding.severity === "breaking").length,
+    deprecated: findings.filter((finding) => finding.severity === "deprecated").length,
+    info: findings.filter((finding) => finding.severity === "info").length,
+    total: findings.length,
+  }
+
+  return {
+    schemaVersion: "1",
+    tool: { name: "mcp-ready", version },
+    specification: "2026-07-28",
+    target,
+    generatedAt: new Date().toISOString(),
+    sdks,
+    summary,
+    findings,
+  }
+}
+
+export function renderJson(
+  findings: Finding[],
+  target: string,
+  sdks: SdkInfo[],
+  version: string,
+): string {
+  return JSON.stringify(buildJsonReport(findings, target, sdks, version), null, 2)
 }
