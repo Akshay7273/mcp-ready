@@ -66,14 +66,14 @@ jobs:
         uses: ./
         with:
           path: fixtures/ts-v2-clean
-          package-version: 0.2.0
+          package-version: 0.3.0
       - name: Breaking fixture must fail
         id: breaking
         continue-on-error: true
         uses: ./
         with:
           path: fixtures/ts-v2-hazards
-          package-version: 0.2.0
+          package-version: 0.3.0
       - name: Verify failure propagation
         if: always()
         shell: bash
