@@ -90,8 +90,17 @@ const pySdkV1: Rule = {
   confidence: "high",
   async check(ctx) {
     if (!ctx.sdks.some((sdk) => sdk.language === "python")) return []
-    const matches = await searchSourceFiles(ctx, /\bFastMCP\b/, (f) => f.endsWith(".py"))
-    return matches.map(
+    const matches = await searchSourceFiles(
+      ctx,
+      /\bFastMCP\b/,
+      (file) => file.endsWith(".py"),
+      (content) =>
+        /from\s+mcp\.server\.fastmcp(?:\.\w+)?\s+import\s+(?:\([^)]{0,500}\)|[^\n]*)\bFastMCP\b/.test(
+          content,
+        ),
+    )
+    const firstMatchByFile = [...new Map(matches.map((match) => [match.file, match])).values()]
+    return firstMatchByFile.map(
       (m): FindingDraft => ({
         ruleId: "py-sdk-v1",
         severity: "breaking",

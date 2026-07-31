@@ -38,8 +38,13 @@ describe("mcp-ready rules", () => {
     expect(findings).toHaveLength(0)
   })
 
-  it("does not confuse the external FastMCP package with the official Python SDK", async () => {
+  it("does not confuse external FastMCP with the official class when both packages are present", async () => {
     const findings = await scan("fixtures/py-external-fastmcp")
+    expect(findings).toHaveLength(0)
+  })
+
+  it("ignores legacy tokens that appear only in comments", async () => {
+    const findings = await scan("fixtures/comment-only")
     expect(findings).toHaveLength(0)
   })
 

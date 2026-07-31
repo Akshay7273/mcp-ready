@@ -60,7 +60,13 @@ const codemodMarker: Rule = {
   protocolEra: "modern",
   confidence: "high",
   async check(ctx) {
-    const matches = await searchSourceFiles(ctx, /@mcp-codemod-error/, isTypeScriptSource)
+    const matches = await searchSourceFiles(
+      ctx,
+      /@mcp-codemod-error/,
+      isTypeScriptSource,
+      () => true,
+      true,
+    )
     return matches.map((match) =>
       migrationFinding(
         "ts-codemod-marker",

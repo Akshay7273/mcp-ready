@@ -55,7 +55,7 @@ SDK manifest detection supports:
 - TypeScript/JavaScript: `package.json`;
 - Python: `pyproject.toml` and `requirements*.txt`;
 - Go: `go.mod`;
-- C#: `*.csproj`.
+- C#: `*.csproj` and centrally managed `Directory.Packages.props` versions.
 
 Source scanning covers TypeScript, JavaScript, Python, Go, and C#. Tests, generated output,
 dependency directories, virtual environments, and build directories are excluded.
