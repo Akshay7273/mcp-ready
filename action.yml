@@ -33,9 +33,11 @@ runs:
 
         report_path="$(mktemp "${RUNNER_TEMP}/mcp-ready-report.XXXXXX.md")"
         trap 'rm -f "$report_path"' EXIT
+        scan_target="$(realpath -m -- "$SCAN_PATH")"
 
         set +e
-        npx --yes "@akshay7273/mcp-ready@${MCP_READY_VERSION}" "$SCAN_PATH" \
+        cd "$RUNNER_TEMP"
+        npx --yes "@akshay7273/mcp-ready@${MCP_READY_VERSION}" "$scan_target" \
           --format markdown \
           --output "$report_path" \
           --fail-on "$FAIL_ON"
