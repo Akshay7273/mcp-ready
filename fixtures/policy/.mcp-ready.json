@@ -1,0 +1,12 @@
+{
+  "schemaVersion": "1",
+  "baseline": "mcp-ready-baseline.json",
+  "suppressions": [
+    {
+      "ruleId": "removed-ping",
+      "file": "server.ts",
+      "line": 3,
+      "reason": "Intentional transport compatibility probe"
+    }
+  ]
+}

@@ -7,6 +7,8 @@ describe("CLI options", () => {
       target: ".",
       format: "terminal",
       output: undefined,
+      config: undefined,
+      writeBaseline: undefined,
       failOn: "breaking",
       legacyMarkdown: false,
     })
@@ -28,6 +30,15 @@ describe("CLI options", () => {
       target: "repo",
       format: "sarif",
       output: "results.sarif",
+    })
+  })
+
+  it("parses policy controls", () => {
+    expect(
+      parseCliOptions(["repo", "--config", "repo/policy.json", "--write-baseline", "known.json"]),
+    ).toMatchObject({
+      config: "repo/policy.json",
+      writeBaseline: "known.json",
     })
   })
 

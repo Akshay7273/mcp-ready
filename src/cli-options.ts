@@ -5,6 +5,8 @@ export type CliOptions = {
   target: string
   format: OutputFormat
   output?: string
+  config?: string
+  writeBaseline?: string
   failOn: FailOn
   legacyMarkdown: boolean
 }
@@ -22,6 +24,8 @@ export function parseCliOptions(args: string[]): CliOptions {
   let target = "."
   let format: OutputFormat = "terminal"
   let output: string | undefined
+  let config: string | undefined
+  let writeBaseline: string | undefined
   let failOn: FailOn = "breaking"
   let legacyMarkdown = false
   let targetSeen = false
@@ -39,6 +43,12 @@ export function parseCliOptions(args: string[]): CliOptions {
       index++
     } else if (arg === "--output" || arg === "-o") {
       output = valueAfter(args, index, arg)
+      index++
+    } else if (arg === "--config") {
+      config = valueAfter(args, index, arg)
+      index++
+    } else if (arg === "--write-baseline") {
+      writeBaseline = valueAfter(args, index, arg)
       index++
     } else if (arg === "--fail-on") {
       const value = valueAfter(args, index, arg) as FailOn
@@ -59,5 +69,5 @@ export function parseCliOptions(args: string[]): CliOptions {
     throw new Error("--output requires --format markdown, json, or sarif")
   }
 
-  return { target, format, output, failOn, legacyMarkdown }
+  return { target, format, output, config, writeBaseline, failOn, legacyMarkdown }
 }
