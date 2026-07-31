@@ -7,17 +7,19 @@ Thanks for helping MCP servers get ready for the 2026-07-28 spec! 🛩️
 - Node 20+
 - `npm install`
 - `npm run dev -- fixtures/ts-violations` — demo scan (intentionally exits 1)
+- `npm test`
 - `npm run build`
 
 ## Adding a detection rule
 
 1. Open `src/rules/index.ts`
-2. Copy an existing rule object and give it a unique `id`, a `severity`
-   (`breaking` | `deprecated` | `info`), and a line-match pattern via
-   `searchSourceFiles`
+2. Copy an existing rule object and give it a stable `id`, `severity`, protocol era,
+   confidence, authoritative documentation URL, and a narrowly scoped pattern
 3. Add your rule to the exported `rules` array at the bottom
 4. Add (or extend) a fixture under `fixtures/` that triggers your rule
-5. Run `npm run dev -- fixtures/<your-fixture>` and paste the output in your PR
+5. Add a negative fixture when compatible code could resemble the pattern
+6. Run `npm test`, `npm run build`, and `npm run dev -- fixtures/<your-fixture>`
+7. Update `docs/rules.md` and paste the fixture output in your PR
 
 ## Reporting false positives
 

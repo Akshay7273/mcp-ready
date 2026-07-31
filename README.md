@@ -17,6 +17,20 @@ npx @akshay7273/mcp-ready .
 
 That's it. Point it at any MCP server repo and read the report.
 
+### CI and machine-readable output
+
+```bash
+# JSON to stdout
+npx @akshay7273/mcp-ready . --format json
+
+# Write a Markdown report and fail on breaking or deprecated findings
+npx @akshay7273/mcp-ready . --format markdown --output mcp-ready.md --fail-on deprecated
+```
+
+`--fail-on` accepts `breaking` (default), `deprecated`, or `none`. JSON reports use schema
+version `1` and include detected SDKs, summary counts, protocol applicability, confidence, and
+all remediation metadata.
+
 ## Use in CI (GitHub Action)
 
 ```yaml
@@ -45,6 +59,9 @@ Fails the build when 🔴 breaking findings are detected (exit code 1).
 
 Pure static analysis: manifest parsing + source pattern matching. Nothing is executed, nothing leaves your machine, no network calls.
 
+See the [rule catalog](docs/rules.md) for stable IDs and confidence levels, and
+[architecture](docs/architecture.md) for the scan pipeline and security boundary.
+
 ## Fixing what it finds
 
 Every finding links to the relevant migration doc. For TypeScript, the official codemod does the mechanical parts:
@@ -64,11 +81,11 @@ See also the official [2026-07-28 changelog](https://modelcontextprotocol.io/spe
 - [x] Markdown report output (v0.1)
 - [ ] Final 2026-07-28 rule pack (v0.2)
 - [ ] GitHub Action with PR summary comments (v0.2)
-- [ ] JSON output for CI pipelines (v0.2)
+- [x] JSON output for CI pipelines (v0.2)
 
 ## Contributing
 
-Issues and PRs welcome — especially real-world repos where the scanner gets it wrong. False-positive reports are gold. See [CONTRIBUTING.md](CONTRIBUTING.md) (coming with v0.1).
+Issues and PRs welcome — especially real-world repos where the scanner gets it wrong. False-positive reports are gold. See [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## License
 
