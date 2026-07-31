@@ -8,6 +8,7 @@ All notable changes are documented here. The project follows Semantic Versioning
 
 - SARIF 2.1.0 output with deterministic rule metadata and GitHub code-scanning locations.
 - GitHub Action job summaries with configurable failure thresholds.
+- Checked-in baselines, exact rule/file suppressions, and stale-baseline reporting.
 
 ### Changed
 

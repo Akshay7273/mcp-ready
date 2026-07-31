@@ -1,5 +1,6 @@
 import pc from "picocolors"
 import type { FailOn } from "./cli-options.js"
+import type { AcceptedFinding, BaselineEntry, PolicyEvaluation } from "./policy.js"
 import type { Finding, Rule, SdkInfo, Severity } from "./types.js"
 
 const ORDER: Severity[] = ["breaking", "deprecated", "info"]
@@ -41,33 +42,43 @@ export function groupBySeverity(findings: Finding[]): Map<Severity, Finding[]> {
   return groups
 }
 
-export function printReport(findings: Finding[]): void {
+export function printReport(findings: Finding[], policy?: PolicyEvaluation): void {
   if (findings.length === 0) {
     console.log(
-      pc.green("\n✅ No issues found. This repo looks ready for the 2026-07-28 MCP spec.\n"),
+      pc.green("\n✅ No active issues found. This repo looks ready for the 2026-07-28 MCP spec.\n"),
     )
-    return
-  }
-  const groups = groupBySeverity(findings)
-  for (const sev of ORDER) {
-    const list = groups.get(sev) ?? []
-    if (list.length === 0) continue
-    console.log(COLOR[sev](pc.bold(`\n${LABEL[sev]} (${list.length})`)))
-    for (const f of list) {
-      const loc = terminalText(f.line ? `${f.file}:${f.line}` : f.file)
-      console.log(
-        `  ${pc.bold(terminalText(f.ruleId))}  ${pc.dim(loc)}  ${pc.dim(`${ERA_LABEL[f.protocolEra]} · ${f.confidence} confidence`)}`,
-      )
-      console.log(`      ${terminalText(f.message)}`)
-      if (f.fixHint) console.log(pc.dim(`      ↪ fix: ${terminalText(f.fixHint)}`))
-      if (f.docsUrl) console.log(pc.dim(`      ↪ docs: ${terminalText(f.docsUrl)}`))
+  } else {
+    const groups = groupBySeverity(findings)
+    for (const sev of ORDER) {
+      const list = groups.get(sev) ?? []
+      if (list.length === 0) continue
+      console.log(COLOR[sev](pc.bold(`\n${LABEL[sev]} (${list.length})`)))
+      for (const f of list) {
+        const loc = terminalText(f.line ? `${f.file}:${f.line}` : f.file)
+        console.log(
+          `  ${pc.bold(terminalText(f.ruleId))}  ${pc.dim(loc)}  ${pc.dim(`${ERA_LABEL[f.protocolEra]} · ${f.confidence} confidence`)}`,
+        )
+        console.log(`      ${terminalText(f.message)}`)
+        if (f.fixHint) console.log(pc.dim(`      ↪ fix: ${terminalText(f.fixHint)}`))
+        if (f.docsUrl) console.log(pc.dim(`      ↪ docs: ${terminalText(f.docsUrl)}`))
+      }
     }
+    const counts = ORDER.map((sev) => `${(groups.get(sev) ?? []).length} ${sev}`).join(", ")
+    console.log(pc.bold(`\nSummary: ${counts}\n`))
   }
-  const counts = ORDER.map((sev) => `${(groups.get(sev) ?? []).length} ${sev}`).join(", ")
-  console.log(pc.bold(`\nSummary: ${counts}\n`))
+  if (policy?.accepted.length) {
+    console.log(pc.dim(`${policy.accepted.length} known finding(s) accepted by policy.`))
+  }
+  if (policy?.staleBaseline.length) {
+    console.log(pc.yellow(`${policy.staleBaseline.length} stale baseline entr${policy.staleBaseline.length === 1 ? "y" : "ies"} found.`))
+  }
 }
 
-export function renderMarkdown(findings: Finding[], target: string): string {
+export function renderMarkdown(
+  findings: Finding[],
+  target: string,
+  policy?: Pick<PolicyEvaluation, "accepted" | "staleBaseline">,
+): string {
   const lines: string[] = [
     "# mcp-ready report",
     "",
@@ -75,23 +86,39 @@ export function renderMarkdown(findings: Finding[], target: string): string {
     "",
   ]
   if (findings.length === 0) {
-    lines.push("✅ No issues found. This repo looks ready for the 2026-07-28 MCP spec.")
-    return lines.join("\n")
-  }
-  const groups = groupBySeverity(findings)
-  for (const sev of ORDER) {
-    const list = groups.get(sev) ?? []
-    if (list.length === 0) continue
-    lines.push(`## ${LABEL[sev]} (${list.length})`, "")
-    lines.push(
-      "| Rule | Location | Applies to | Confidence | Problem |",
-      "| --- | --- | --- | --- | --- |",
-    )
-    for (const f of list) {
-      const loc = f.line ? `${f.file}:${f.line}` : f.file
+    lines.push("✅ No active issues found. This repo looks ready for the 2026-07-28 MCP spec.")
+  } else {
+    const groups = groupBySeverity(findings)
+    for (const sev of ORDER) {
+      const list = groups.get(sev) ?? []
+      if (list.length === 0) continue
+      lines.push(`## ${LABEL[sev]} (${list.length})`, "")
       lines.push(
-        `| \`${markdownCell(f.ruleId)}\` | \`${markdownCell(loc)}\` | ${ERA_LABEL[f.protocolEra]} | ${f.confidence} | ${markdownCell(f.message)} |`,
+        "| Rule | Location | Applies to | Confidence | Problem |",
+        "| --- | --- | --- | --- | --- |",
       )
+      for (const f of list) {
+        const loc = f.line ? `${f.file}:${f.line}` : f.file
+        lines.push(
+          `| \`${markdownCell(f.ruleId)}\` | \`${markdownCell(loc)}\` | ${ERA_LABEL[f.protocolEra]} | ${f.confidence} | ${markdownCell(f.message)} |`,
+        )
+      }
+      lines.push("")
+    }
+  }
+  if (policy?.accepted.length) {
+    lines.push(`## Accepted by policy (${policy.accepted.length})`, "")
+    for (const finding of policy.accepted) {
+      const loc = finding.line ? `${finding.file}:${finding.line}` : finding.file
+      lines.push(`- \`${markdownCell(finding.ruleId)}\` at \`${markdownCell(loc)}\` — ${finding.disposition}`)
+    }
+    lines.push("")
+  }
+  if (policy?.staleBaseline.length) {
+    lines.push(`## Stale baseline entries (${policy.staleBaseline.length})`, "")
+    for (const entry of policy.staleBaseline) {
+      const loc = entry.line ? `${entry.file}:${entry.line}` : entry.file
+      lines.push(`- \`${markdownCell(entry.ruleId)}\` at \`${markdownCell(loc)}\``)
     }
     lines.push("")
   }
@@ -121,6 +148,8 @@ export type JsonReport = {
   sdks: SdkInfo[]
   summary: Record<Severity, number> & { total: number }
   findings: Finding[]
+  accepted: AcceptedFinding[]
+  staleBaseline: BaselineEntry[]
 }
 
 export function buildJsonReport(
@@ -128,6 +157,7 @@ export function buildJsonReport(
   target: string,
   sdks: SdkInfo[],
   version: string,
+  policy?: Pick<PolicyEvaluation, "accepted" | "staleBaseline">,
 ): JsonReport {
   const summary = {
     breaking: findings.filter((finding) => finding.severity === "breaking").length,
@@ -145,6 +175,8 @@ export function buildJsonReport(
     sdks,
     summary,
     findings,
+    accepted: policy?.accepted ?? [],
+    staleBaseline: policy?.staleBaseline ?? [],
   }
 }
 
@@ -153,8 +185,9 @@ export function renderJson(
   target: string,
   sdks: SdkInfo[],
   version: string,
+  policy?: Pick<PolicyEvaluation, "accepted" | "staleBaseline">,
 ): string {
-  return JSON.stringify(buildJsonReport(findings, target, sdks, version), null, 2)
+  return JSON.stringify(buildJsonReport(findings, target, sdks, version, policy), null, 2)
 }
 
 type SarifLevel = "error" | "warning" | "note"

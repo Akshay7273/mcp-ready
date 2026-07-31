@@ -1,0 +1,14 @@
+{
+  "schemaVersion": "1",
+  "findings": [
+    {
+      "ruleId": "ts-monolith-sdk",
+      "file": "package.json"
+    },
+    {
+      "ruleId": "removed-ping",
+      "file": "server.ts",
+      "line": 99
+    }
+  ]
+}

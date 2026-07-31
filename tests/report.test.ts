@@ -26,6 +26,8 @@ describe("machine-readable reports", () => {
     expect(report.schemaVersion).toBe("1")
     expect(report.specification).toBe("2026-07-28")
     expect(report.summary).toEqual({ breaking: 0, deprecated: 1, info: 0, total: 1 })
+    expect(report.accepted).toEqual([])
+    expect(report.staleBaseline).toEqual([])
   })
 
   it("supports configurable failure thresholds", () => {
@@ -42,6 +44,16 @@ describe("machine-readable reports", () => {
     expect(markdown).toContain("target&#96;name")
     expect(markdown).toContain("odd&#124;name&#96;file.ts")
     expect(markdown).toContain("value &#124; next<br>line")
+  })
+
+  it("keeps accepted and stale policy entries visible in JSON", () => {
+    const report = buildJsonReport([], ".", [], "0.3.0", {
+      accepted: [{ ...finding, disposition: "suppressed", reason: "Known compatibility path" }],
+      staleBaseline: [{ ruleId: "example", file: "removed.ts", line: 4 }],
+    })
+    expect(report.summary.total).toBe(0)
+    expect(report.accepted[0]).toMatchObject({ disposition: "suppressed" })
+    expect(report.staleBaseline).toEqual([{ ruleId: "example", file: "removed.ts", line: 4 }])
   })
 
   it("builds deterministic SARIF 2.1.0 rule and result metadata", () => {

@@ -3,6 +3,7 @@ import { writeFile } from "node:fs/promises"
 import pc from "picocolors"
 import { parseCliOptions } from "./cli-options.js"
 import { buildScanContext } from "./detect.js"
+import { applyPolicy, loadPolicy, writeBaseline } from "./policy.js"
 import { printReport, renderJson, renderMarkdown, renderSarif, shouldFail } from "./report.js"
 import { rules } from "./rules/index.js"
 import { runRules } from "./scan.js"
@@ -22,6 +23,8 @@ Options:
   --format <type> Output format: terminal, markdown, json, or sarif
   --json          Alias for --format json
   --output, -o    Write Markdown, JSON, or SARIF output to a file
+  --config        Use a specific .mcp-ready.json configuration
+  --write-baseline Write current unsuppressed findings to a baseline file
   --fail-on       Failure threshold: breaking, deprecated, or none
   --md            Also write mcp-ready-report.md (legacy convenience option)
   -h, --help      Show this help
@@ -68,17 +71,30 @@ async function main(): Promise<void> {
   }
 
   const findings = await runRules(ctx, rules)
+  const loadedPolicy = await loadPolicy(
+    ctx.rootDir,
+    options.config,
+    new Set(rules.map((rule) => rule.id)),
+  )
+  const evaluation = applyPolicy(findings, loadedPolicy.config, loadedPolicy.baseline, {
+    configPath: loadedPolicy.configPath,
+    baselinePath: loadedPolicy.baselinePath,
+  })
+
+  if (options.writeBaseline) {
+    await writeBaseline(options.writeBaseline, evaluation.baselineCandidates)
+  }
 
   let rendered: string | undefined
   if (options.format === "terminal") {
-    printReport(findings)
+    printReport(evaluation.findings, evaluation)
     console.log(pc.dim(`Scanned ${ctx.files.length} files with ${rules.length} rules.\n`))
   } else if (options.format === "markdown") {
-    rendered = renderMarkdown(findings, target)
+    rendered = renderMarkdown(evaluation.findings, target, evaluation)
   } else if (options.format === "json") {
-    rendered = renderJson(findings, target, ctx.sdks, VERSION)
+    rendered = renderJson(evaluation.findings, target, ctx.sdks, VERSION, evaluation)
   } else {
-    rendered = renderSarif(findings, rules, VERSION)
+    rendered = renderSarif(evaluation.findings, rules, VERSION)
   }
 
   if (rendered && options.output) {
@@ -88,13 +104,13 @@ async function main(): Promise<void> {
   }
 
   if (options.legacyMarkdown) {
-    await writeFile("mcp-ready-report.md", renderMarkdown(findings, target), "utf8")
+    await writeFile("mcp-ready-report.md", renderMarkdown(evaluation.findings, target, evaluation), "utf8")
     if (options.format === "terminal") {
       console.log(pc.dim("Markdown report written to mcp-ready-report.md\n"))
     }
   }
 
-  if (shouldFail(findings, options.failOn)) process.exitCode = 1
+  if (shouldFail(evaluation.findings, options.failOn)) process.exitCode = 1
 }
 
 main().catch((err) => {
