@@ -8,6 +8,14 @@ inputs:
     description: "Directory to scan"
     required: false
     default: "."
+  fail-on:
+    description: "Failure threshold: breaking, deprecated, or none"
+    required: false
+    default: "breaking"
+  package-version:
+    description: "Exact @akshay7273/mcp-ready version to execute"
+    required: false
+    default: "0.2.0"
 runs:
   using: "composite"
   steps:
@@ -15,4 +23,32 @@ runs:
       shell: bash
       env:
         SCAN_PATH: ${{ inputs.path }}
-      run: npx --yes @akshay7273/mcp-ready@latest "$SCAN_PATH"
+        FAIL_ON: ${{ inputs['fail-on'] }}
+        MCP_READY_VERSION: ${{ inputs['package-version'] }}
+      run: |
+        if [[ ! "$MCP_READY_VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.-]+)?$ ]]; then
+          echo "package-version must be an exact semantic version" >&2
+          exit 2
+        fi
+
+        report_path="$(mktemp "${RUNNER_TEMP}/mcp-ready-report.XXXXXX.md")"
+        trap 'rm -f "$report_path"' EXIT
+        scan_target="$(realpath -m -- "$SCAN_PATH")"
+
+        set +e
+        cd "$RUNNER_TEMP"
+        npx --yes "@akshay7273/mcp-ready@${MCP_READY_VERSION}" "$scan_target" \
+          --format markdown \
+          --output "$report_path" \
+          --fail-on "$FAIL_ON"
+        scan_status=$?
+        set -e
+
+        if [[ -s "$report_path" ]]; then
+          cat "$report_path" >> "$GITHUB_STEP_SUMMARY"
+        else
+          echo "## mcp-ready" >> "$GITHUB_STEP_SUMMARY"
+          echo "The scanner exited before producing a report." >> "$GITHUB_STEP_SUMMARY"
+        fi
+
+        exit "$scan_status"

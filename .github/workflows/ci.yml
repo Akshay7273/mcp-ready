@@ -45,3 +45,34 @@ jobs:
         run: |
           node dist/cli.js fixtures/ts-v2-hazards --format json --fail-on none --output report.json
           node -e "JSON.parse(require('node:fs').readFileSync('report.json', 'utf8'))"
+
+  action-smoke:
+    name: Composite Action
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Clean fixture must pass
+        uses: ./
+        with:
+          path: fixtures/ts-v2-clean
+          package-version: 0.2.0
+      - name: Breaking fixture must fail
+        id: breaking
+        continue-on-error: true
+        uses: ./
+        with:
+          path: fixtures/ts-v2-hazards
+          package-version: 0.2.0
+      - name: Verify failure propagation
+        if: always()
+        shell: bash
+        env:
+          BREAKING_OUTCOME: ${{ steps.breaking.outcome }}
+        run: |
+          if [[ "$BREAKING_OUTCOME" != "failure" ]]; then
+            echo "Expected the breaking fixture to fail, got: $BREAKING_OUTCOME"
+            exit 1
+          fi
