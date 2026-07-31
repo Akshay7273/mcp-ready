@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Usage and migration questions
+    url: https://github.com/Akshay7273/mcp-ready/discussions
+    about: Ask questions and discuss MCP migrations with the community.
+  - name: Private security report
+    url: https://github.com/Akshay7273/mcp-ready/security/advisories/new
+    about: Report vulnerabilities privately instead of opening a public issue.
