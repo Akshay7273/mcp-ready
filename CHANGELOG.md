@@ -9,11 +9,15 @@ All notable changes are documented here. The project follows Semantic Versioning
 - SARIF 2.1.0 output with deterministic rule metadata and GitHub code-scanning locations.
 - GitHub Action job summaries with configurable failure thresholds.
 - Checked-in baselines, exact rule/file suppressions, and stale-baseline reporting.
+- Cross-language validation against pinned Python, Go, and C# MCP server commits.
 
 ### Changed
 
 - Upgraded official GitHub Actions to their Node 24 releases.
 - Kept major development-dependency upgrades independently reviewable in Dependabot.
+- Scoped Python v1 detection to the official FastMCP import and ignored comment-only migration
+  tokens while retaining codemod diagnostics.
+- Detected centrally managed C# SDK versions from `Directory.Packages.props`.
 
 ## [0.2.0] - 2026-07-31
 
