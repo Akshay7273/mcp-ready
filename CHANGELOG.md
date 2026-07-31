@@ -13,6 +13,7 @@ All notable changes are documented here. The project follows Semantic Versioning
 - Configurable `--fail-on` policy for CI consumers.
 - Node 20, 22, and 24 verification matrix.
 - Security policy, support guidance, issue forms, and contributor templates.
+- A reproducible real-world validation log with pinned target commits.
 
 ### Changed
 
@@ -20,6 +21,7 @@ All notable changes are documented here. The project follows Semantic Versioning
 - Updated the TypeScript migration command to the stable codemod release.
 - Expanded Markdown reports with applicability and confidence columns.
 - Upgraded the test toolchain to patched releases.
+- Reduced false positives by scoping ambiguous SDK rules and excluding generated/vendor source.
 
 ### Security
 

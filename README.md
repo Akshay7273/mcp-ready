@@ -60,7 +60,9 @@ Fails the build when 🔴 breaking findings are detected (exit code 1).
 Pure static analysis: manifest parsing + source pattern matching. Nothing is executed, nothing leaves your machine, no network calls.
 
 See the [rule catalog](docs/rules.md) for stable IDs and confidence levels, and
-[architecture](docs/architecture.md) for the scan pipeline and security boundary.
+[architecture](docs/architecture.md) for the scan pipeline and security boundary. The
+[validation log](docs/validation.md) records reproducible scans against real MCP repositories and
+the false-positive fixes they produced.
 
 ## Fixing what it finds
 
