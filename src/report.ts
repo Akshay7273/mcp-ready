@@ -22,6 +22,18 @@ const ERA_LABEL = {
   both: "all protocol eras",
 } as const
 
+function terminalText(value: string): string {
+  return value.replace(/[\u0000-\u001f\u007f-\u009f]/g, " ")
+}
+
+function markdownCell(value: string): string {
+  return value
+    .replace(/&/g, "&amp;")
+    .replace(/\|/g, "&#124;")
+    .replace(/`/g, "&#96;")
+    .replace(/[\r\n]+/g, "<br>")
+}
+
 export function groupBySeverity(findings: Finding[]): Map<Severity, Finding[]> {
   const groups = new Map<Severity, Finding[]>()
   for (const sev of ORDER) groups.set(sev, [])
@@ -42,13 +54,13 @@ export function printReport(findings: Finding[]): void {
     if (list.length === 0) continue
     console.log(COLOR[sev](pc.bold(`\n${LABEL[sev]} (${list.length})`)))
     for (const f of list) {
-      const loc = f.line ? `${f.file}:${f.line}` : f.file
+      const loc = terminalText(f.line ? `${f.file}:${f.line}` : f.file)
       console.log(
-        `  ${pc.bold(f.ruleId)}  ${pc.dim(loc)}  ${pc.dim(`${ERA_LABEL[f.protocolEra]} · ${f.confidence} confidence`)}`,
+        `  ${pc.bold(terminalText(f.ruleId))}  ${pc.dim(loc)}  ${pc.dim(`${ERA_LABEL[f.protocolEra]} · ${f.confidence} confidence`)}`,
       )
-      console.log(`      ${f.message}`)
-      if (f.fixHint) console.log(pc.dim(`      ↪ fix: ${f.fixHint}`))
-      if (f.docsUrl) console.log(pc.dim(`      ↪ docs: ${f.docsUrl}`))
+      console.log(`      ${terminalText(f.message)}`)
+      if (f.fixHint) console.log(pc.dim(`      ↪ fix: ${terminalText(f.fixHint)}`))
+      if (f.docsUrl) console.log(pc.dim(`      ↪ docs: ${terminalText(f.docsUrl)}`))
     }
   }
   const counts = ORDER.map((sev) => `${(groups.get(sev) ?? []).length} ${sev}`).join(", ")
@@ -59,7 +71,7 @@ export function renderMarkdown(findings: Finding[], target: string): string {
   const lines: string[] = [
     "# mcp-ready report",
     "",
-    `Scanned: \`${target}\` · ${new Date().toISOString()}`,
+    `Scanned: \`${markdownCell(target)}\` · ${new Date().toISOString()}`,
     "",
   ]
   if (findings.length === 0) {
@@ -78,7 +90,7 @@ export function renderMarkdown(findings: Finding[], target: string): string {
     for (const f of list) {
       const loc = f.line ? `${f.file}:${f.line}` : f.file
       lines.push(
-        `| \`${f.ruleId}\` | \`${loc}\` | ${ERA_LABEL[f.protocolEra]} | ${f.confidence} | ${f.message} |`,
+        `| \`${markdownCell(f.ruleId)}\` | \`${markdownCell(loc)}\` | ${ERA_LABEL[f.protocolEra]} | ${f.confidence} | ${markdownCell(f.message)} |`,
       )
     }
     lines.push("")
