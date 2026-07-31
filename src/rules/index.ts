@@ -1,4 +1,5 @@
 import type { FindingDraft, Rule } from "../types.js"
+import { finalSpecRules } from "./final-spec.js"
 import { searchSourceFiles } from "./util.js"
 
 const DOCS = {
@@ -167,7 +168,7 @@ const deprecatedLogging: Rule = {
   async check(ctx) {
     const matches = await searchSourceFiles(
       ctx,
-      /logging\/setLevel|sendLoggingMessage|LoggingMessageNotification/,
+      /sendLoggingMessage|LoggingMessageNotification/,
     )
     return matches.map(
       (m): FindingDraft => ({
@@ -245,4 +246,5 @@ export const rules: Rule[] = [
   deprecatedLogging,
   pyUnboundedDep,
   schema202012,
+  ...finalSpecRules,
 ]
