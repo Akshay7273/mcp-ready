@@ -1,5 +1,5 @@
 import fg from "fast-glob"
-import { readFile } from "node:fs/promises"
+import { readFile, stat } from "node:fs/promises"
 import path from "node:path"
 import type { ScanContext, SdkInfo } from "./types.js"
 
@@ -40,20 +40,36 @@ const GO_SDK_RE = /github\.com\/modelcontextprotocol\/go-sdk(?:\/v\d+)?\s+(v[\w.
 const CSPROJ_RE = /<PackageReference\s+Include="(ModelContextProtocol[^"]*)"\s+Version="([^"]+)"/g
 
 export async function buildScanContext(rootDir: string): Promise<ScanContext> {
-  const files = await fg(FILE_PATTERNS, { cwd: rootDir, ignore: IGNORE, dot: false })
+  const absoluteRoot = path.resolve(rootDir)
+  const rootStat = await stat(absoluteRoot).catch(() => {
+    throw new Error(`Scan target does not exist: ${rootDir}`)
+  })
+  if (!rootStat.isDirectory()) throw new Error(`Scan target is not a directory: ${rootDir}`)
+
+  const files = await fg(FILE_PATTERNS, {
+    cwd: absoluteRoot,
+    ignore: IGNORE,
+    dot: false,
+    followSymbolicLinks: false,
+  })
   files.sort()
 
   const cache = new Map<string, string>()
   const read = async (relPath: string): Promise<string> => {
     const hit = cache.get(relPath)
     if (hit !== undefined) return hit
-    const content = await readFile(path.join(rootDir, relPath), "utf8")
+    const absolutePath = path.resolve(absoluteRoot, relPath)
+    const relativePath = path.relative(absoluteRoot, absolutePath)
+    if (relativePath.startsWith("..") || path.isAbsolute(relativePath)) {
+      throw new Error(`Refusing to read outside scan target: ${relPath}`)
+    }
+    const content = await readFile(absolutePath, "utf8")
     cache.set(relPath, content)
     return content
   }
 
   const sdks = await detectSdks(files, read)
-  return { rootDir, files, read, sdks }
+  return { rootDir: absoluteRoot, files, read, sdks }
 }
 
 export async function detectSdks(
