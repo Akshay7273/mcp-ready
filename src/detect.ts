@@ -28,6 +28,7 @@ const FILE_PATTERNS = [
   "**/requirements*.txt",
   "**/go.mod",
   "**/*.csproj",
+  "**/Directory.Packages.props",
 ]
 
 const TS_SDK_PACKAGES = [
@@ -43,7 +44,9 @@ const PY_MCP_RE =
 
 const GO_SDK_RE = /github\.com\/modelcontextprotocol\/go-sdk(?:\/v\d+)?\s+(v[\w.+-]+)/
 
-const CSPROJ_RE = /<PackageReference\s+Include="(ModelContextProtocol[^"]*)"\s+Version="([^"]+)"/g
+const DOTNET_PACKAGE_TAG_RE = /<Package(?:Reference|Version)\b[^>]*>/g
+const XML_ATTRIBUTE_RE = (name: string): RegExp =>
+  new RegExp(`\\b${name}\\s*=\\s*["']([^"']+)["']`, "i")
 
 export async function buildScanContext(rootDir: string): Promise<ScanContext> {
   const absoluteRoot = path.resolve(rootDir)
@@ -136,13 +139,17 @@ export async function detectSdks(
           manifestPath: file,
         })
       }
-    } else if (base.endsWith(".csproj")) {
+    } else if (base.endsWith(".csproj") || base === "Directory.Packages.props") {
       const text = await read(file)
-      for (const m of text.matchAll(CSPROJ_RE)) {
+      for (const tag of text.match(DOTNET_PACKAGE_TAG_RE) ?? []) {
+        const packageName = XML_ATTRIBUTE_RE("Include").exec(tag)?.[1]
+        if (!packageName?.startsWith("ModelContextProtocol")) continue
+        const version = XML_ATTRIBUTE_RE("Version").exec(tag)?.[1] ?? null
+        if (base.endsWith(".csproj") && version === null) continue
         sdks.push({
           language: "csharp",
-          packageName: m[1],
-          versionRange: m[2],
+          packageName,
+          versionRange: version,
           manifestPath: file,
         })
       }

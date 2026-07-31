@@ -29,6 +29,10 @@ export function isTestFile(file: string): boolean {
   return TEST_FILE_RE.test(file.replace(/\\/g, "/"))
 }
 
+function isCommentOnlyLine(line: string): boolean {
+  return /^\s*(?:\/\/|#|\/\*|\*|\*\/)/.test(line)
+}
+
 /**
  * Scan source files line by line and return every line matching the pattern.
  * Test files are always skipped. Pass a non-global RegExp.
@@ -38,6 +42,7 @@ export async function searchSourceFiles(
   pattern: RegExp,
   fileFilter: (file: string) => boolean = isSourceFile,
   contentFilter: (content: string) => boolean = () => true,
+  includeCommentLines = false,
 ): Promise<FileMatch[]> {
   const matches: FileMatch[] = []
   for (const file of ctx.files) {
@@ -46,7 +51,7 @@ export async function searchSourceFiles(
     if (!contentFilter(text)) continue
     const lines = text.split("\n")
     for (let i = 0; i < lines.length; i++) {
-      if (pattern.test(lines[i])) {
+      if ((includeCommentLines || !isCommentOnlyLine(lines[i])) && pattern.test(lines[i])) {
         matches.push({ file, line: i + 1, text: lines[i].trim().slice(0, 160) })
       }
     }

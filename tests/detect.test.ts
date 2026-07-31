@@ -44,4 +44,16 @@ describe("SDK detection", () => {
     const ctx = await buildScanContext("fixtures/ignored-source")
     expect(ctx.files).toEqual([])
   })
+
+  it("detects centrally managed C# SDK versions", async () => {
+    const ctx = await buildScanContext("fixtures/csharp-central")
+    expect(ctx.sdks).toEqual([
+      {
+        language: "csharp",
+        packageName: "ModelContextProtocol",
+        versionRange: "0.3.0-preview.3",
+        manifestPath: "Directory.Packages.props",
+      },
+    ])
+  })
 })
