@@ -58,4 +58,27 @@ describe("mcp-ready rules", () => {
       ]),
     )
   })
+
+  it("detects stable TypeScript SDK v2 migration hazards", async () => {
+    const findings = await scan("fixtures/ts-v2-hazards")
+    const ids = new Set(findings.map((finding) => finding.ruleId))
+
+    expect(ids).toEqual(
+      new Set([
+        "ts-v2-prerelease-sdk",
+        "ts-codemod-marker",
+        "ts-legacy-registration-api",
+        "ts-schema-first-handler",
+        "ts-legacy-handler-context",
+        "ts-legacy-error-api",
+        "ts-internal-sdk-import",
+        "ts-zod-v3",
+      ]),
+    )
+  })
+
+  it("does not flag stable TypeScript SDK v2 patterns", async () => {
+    const findings = await scan("fixtures/ts-v2-clean")
+    expect(findings).toHaveLength(0)
+  })
 })

@@ -1,5 +1,6 @@
 import type { FindingDraft, Rule } from "../types.js"
 import { finalSpecRules } from "./final-spec.js"
+import { typescriptV2Rules } from "./typescript-v2.js"
 import { searchSourceFiles } from "./util.js"
 
 const DOCS = {
@@ -247,4 +248,5 @@ export const rules: Rule[] = [
   pyUnboundedDep,
   schema202012,
   ...finalSpecRules,
+  ...typescriptV2Rules,
 ]

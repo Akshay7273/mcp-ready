@@ -1,0 +1,8 @@
+{
+  "name": "ts-v2-hazards",
+  "private": true,
+  "dependencies": {
+    "@modelcontextprotocol/server": "2.0.0-rc.1",
+    "zod": "^3.25.0"
+  }
+}
