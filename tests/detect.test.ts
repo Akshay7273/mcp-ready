@@ -34,4 +34,9 @@ describe("SDK detection", () => {
       "Refusing to read outside scan target",
     )
   })
+
+  it("discovers modern JavaScript and TypeScript module extensions", async () => {
+    const ctx = await buildScanContext("fixtures/module-extensions")
+    expect(ctx.files).toEqual(["client.cts", "component.jsx", "server.mts"])
+  })
 })

@@ -2,7 +2,19 @@ import type { ScanContext } from "../types.js"
 
 export type FileMatch = { file: string; line: number; text: string }
 
-const SOURCE_EXTS = [".ts", ".tsx", ".js", ".mjs", ".cjs", ".py", ".go", ".cs"]
+const SOURCE_EXTS = [
+  ".ts",
+  ".tsx",
+  ".mts",
+  ".cts",
+  ".js",
+  ".jsx",
+  ".mjs",
+  ".cjs",
+  ".py",
+  ".go",
+  ".cs",
+]
 
 // Test files intentionally assert legacy behavior (mocks, old error codes,
 // session headers). Scanning them produces false positives, so they are skipped.

@@ -81,4 +81,15 @@ describe("mcp-ready rules", () => {
     const findings = await scan("fixtures/ts-v2-clean")
     expect(findings).toHaveLength(0)
   })
+
+  it("scans mts, cts, and jsx source files", async () => {
+    const findings = await scan("fixtures/module-extensions")
+    expect(new Set(findings.map((finding) => finding.ruleId))).toEqual(
+      new Set([
+        "session-assumptions",
+        "error-code-32002",
+        "removed-initialized-notification",
+      ]),
+    )
+  })
 })

@@ -16,7 +16,7 @@ const IGNORE = [
 ]
 
 const FILE_PATTERNS = [
-  "**/*.{ts,tsx,js,mjs,cjs,py,go,cs}",
+  "**/*.{ts,tsx,mts,cts,js,jsx,mjs,cjs,py,go,cs}",
   "**/package.json",
   "**/pyproject.toml",
   "**/requirements*.txt",
