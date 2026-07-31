@@ -2,7 +2,7 @@ import type { Finding, Rule } from "../types.js"
 import { searchSourceFiles } from "./util.js"
 
 const DOCS = {
-  releasePost: "https://blog.modelcontextprotocol.io/posts/2026-07-28-release-candidate/",
+  changelog: "https://modelcontextprotocol.io/specification/2026-07-28/changelog",
   sdkBetas: "https://blog.modelcontextprotocol.io/posts/sdk-betas-2026-07-28/",
   tsMigration:
     "https://github.com/modelcontextprotocol/typescript-sdk/blob/main/docs/migration/upgrade-to-v2.md",
@@ -24,9 +24,9 @@ const tsMonolithSdk: Rule = {
         (s): Finding => ({
           ruleId: "ts-monolith-sdk",
           severity: "breaking",
-          message: `Monolithic @modelcontextprotocol/sdk (${s.versionRange ?? "unversioned"}) detected. v2 splits it into @modelcontextprotocol/server and @modelcontextprotocol/client (ESM-only, Node 20+).`,
+          message: `Monolithic @modelcontextprotocol/sdk (${s.versionRange ?? "unversioned"}) detected. v2 splits it into @modelcontextprotocol/server, @modelcontextprotocol/client, and @modelcontextprotocol/core (Node 20+, ESM and CommonJS).`,
           file: s.manifestPath,
-          fixHint: "npx @modelcontextprotocol/codemod@beta v1-to-v2 .",
+          fixHint: "npx @modelcontextprotocol/codemod@latest v1-to-v2 .",
           docsUrl: DOCS.tsMigration,
         }),
       )
@@ -48,7 +48,7 @@ const errorCode32002: Rule = {
         file: m.file,
         line: m.line,
         fixHint: "Match on -32602, or on both codes during the transition.",
-        docsUrl: DOCS.releasePost,
+        docsUrl: DOCS.changelog,
       }),
     )
   },
@@ -69,7 +69,7 @@ const sessionAssumptions: Rule = {
         file: m.file,
         line: m.line,
         fixHint: "Move session state into your application layer or server configuration.",
-        docsUrl: DOCS.releasePost,
+        docsUrl: DOCS.changelog,
       }),
     )
   },
@@ -117,7 +117,7 @@ const deprecatedRoots: Rule = {
           "Roots usage detected — deprecated in the 2026-07-28 revision. Replace with tool parameters, resource URIs, or server configuration.",
         file: m.file,
         line: m.line,
-        docsUrl: DOCS.releasePost,
+        docsUrl: DOCS.changelog,
       }),
     )
   },
@@ -140,7 +140,7 @@ const deprecatedSampling: Rule = {
           "Sampling usage detected — deprecated in the 2026-07-28 revision under the feature lifecycle policy.",
         file: m.file,
         line: m.line,
-        docsUrl: DOCS.releasePost,
+        docsUrl: DOCS.changelog,
       }),
     )
   },
@@ -163,7 +163,7 @@ const deprecatedLogging: Rule = {
           "MCP logging capability usage detected — deprecated. Use stderr for stdio transports, or OpenTelemetry for structured observability.",
         file: m.file,
         line: m.line,
-        docsUrl: DOCS.releasePost,
+        docsUrl: DOCS.changelog,
       }),
     )
   },
@@ -211,7 +211,7 @@ const schema202012: Rule = {
           "Tool schemas can use full JSON Schema 2020-12 in the new revision: composition (oneOf/anyOf/allOf), conditionals, and $ref/$defs are now allowed in inputSchema; structuredContent may be any JSON value.",
         file: m.file,
         line: m.line,
-        docsUrl: DOCS.releasePost,
+        docsUrl: DOCS.changelog,
       },
     ]
   },

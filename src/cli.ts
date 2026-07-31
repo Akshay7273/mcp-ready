@@ -44,7 +44,7 @@ async function main(): Promise<void> {
   const writeMd = args.includes("--md")
 
   console.log(pc.bold(`\n\u2708  mcp-ready v${VERSION}`))
-  console.log(pc.dim(`Scanning "${target}" against the MCP 2026-07-28 revision...\n`))
+  console.log(pc.dim(`Scanning "${target}" against the final MCP 2026-07-28 revision...\n`))
 
   const ctx = await buildScanContext(target)
 
