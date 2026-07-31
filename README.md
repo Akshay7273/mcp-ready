@@ -52,7 +52,7 @@ Fails the build when 🔴 breaking findings are detected (exit code 1).
 | Roots usage | 🟡 deprecated | Replace with tool parameters, resource URIs, or server config |
 | Sampling usage | 🟡 deprecated | Deprecated under the new feature lifecycle policy |
 | Logging capability usage | 🟡 deprecated | Use stderr (stdio) or OpenTelemetry instead |
-| Unbounded `mcp` dependency in Python libraries | 🟡 deprecated | Pin `mcp>=1.27,<2` before v2 stable surprises your users |
+| Python dependency crossing the v2 boundary | 🟡 deprecated | Pin `mcp>=1.29,<2` or migrate explicitly to stable v2 |
 | JSON Schema 2020-12 opportunities | 🔵 info | Tool schemas can now use `oneOf`/`anyOf`/`allOf`, `$ref`, conditionals |
 
 ## How it works
@@ -81,8 +81,8 @@ See also the official [2026-07-28 changelog](https://modelcontextprotocol.io/spe
 - [x] SDK detection (TS / Python / Go / C#)
 - [x] Initial rule engine (v0.1)
 - [x] Markdown report output (v0.1)
-- [ ] Final 2026-07-28 rule pack (v0.2)
-- [ ] GitHub Action with PR summary comments (v0.2)
+- [x] Final 2026-07-28 rule pack (v0.2)
+- [ ] GitHub Action with PR summary comments (v0.3)
 - [x] JSON output for CI pipelines (v0.2)
 
 ## Contributing

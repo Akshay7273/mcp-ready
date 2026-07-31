@@ -33,6 +33,16 @@ describe("mcp-ready rules", () => {
     expect(findings).toHaveLength(0)
   })
 
+  it("accepts an explicit Python SDK v2 range", async () => {
+    const findings = await scan("fixtures/py-v2-clean")
+    expect(findings).toHaveLength(0)
+  })
+
+  it("does not confuse the external FastMCP package with the official Python SDK", async () => {
+    const findings = await scan("fixtures/py-external-fastmcp")
+    expect(findings).toHaveLength(0)
+  })
+
   it("attaches protocol applicability and confidence to every finding", async () => {
     const findings = await scan("fixtures/ts-violations")
     expect(findings.length).toBeGreaterThan(0)

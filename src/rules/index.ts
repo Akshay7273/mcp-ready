@@ -5,7 +5,6 @@ import { searchSourceFiles } from "./util.js"
 
 const DOCS = {
   changelog: "https://modelcontextprotocol.io/specification/2026-07-28/changelog",
-  sdkBetas: "https://blog.modelcontextprotocol.io/posts/sdk-betas-2026-07-28/",
   tsMigration:
     "https://github.com/modelcontextprotocol/typescript-sdk/blob/main/docs/migration/upgrade-to-v2.md",
   pyMigration: "https://py.sdk.modelcontextprotocol.io/v2/migration/",
@@ -90,6 +89,7 @@ const pySdkV1: Rule = {
   protocolEra: "modern",
   confidence: "high",
   async check(ctx) {
+    if (!ctx.sdks.some((sdk) => sdk.language === "python")) return []
     const matches = await searchSourceFiles(ctx, /\bFastMCP\b/, (f) => f.endsWith(".py"))
     return matches.map(
       (m): FindingDraft => ({
@@ -194,16 +194,21 @@ const pyUnboundedDep: Rule = {
   check(ctx) {
     return ctx.sdks
       .filter(
-        (s) => s.language === "python" && (!s.versionRange || !s.versionRange.includes("<")),
+        (s) =>
+          s.language === "python" &&
+          (!s.versionRange ||
+            (!/<\s*2(?:\.0+)?\b/.test(s.versionRange) &&
+              !/==\s*1(?:\.\d+)+(?:\.\*)?\s*$/.test(s.versionRange) &&
+              !/(?:>=|>|~=)\s*2(?:\.|\b)/.test(s.versionRange))),
       )
       .map(
         (s): FindingDraft => ({
           ruleId: "py-unbounded-dep",
           severity: "deprecated",
-          message: `Python dependency on "mcp" has no upper version bound (${s.versionRange ?? "no constraint"}). Pin it so the v2 stable release does not surprise your users.`,
+          message: `Python dependency on "mcp" can resolve across the v2 major boundary (${s.versionRange ?? "no constraint"}). Stable v2 contains breaking API changes.`,
           file: s.manifestPath,
-          fixHint: "Change the requirement to: mcp>=1.27,<2",
-          docsUrl: DOCS.sdkBetas,
+          fixHint: "Pin the legacy line with mcp>=1.29,<2, or migrate explicitly to mcp>=2,<3.",
+          docsUrl: DOCS.pyMigration,
         }),
       )
   },

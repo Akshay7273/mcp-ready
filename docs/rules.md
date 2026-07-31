@@ -42,7 +42,7 @@ All current rules evaluate migration to the modern `2026-07-28` protocol era.
 | Rule ID | Severity | Confidence | Detects |
 | --- | --- | --- | --- |
 | `py-sdk-v1` | breaking | high | `FastMCP` usage that requires SDK v2 migration |
-| `py-unbounded-dep` | deprecated | medium | Python `mcp` dependency without an upper bound |
+| `py-unbounded-dep` | deprecated | medium | Python `mcp` dependency that can cross into stable v2 unintentionally |
 
 ## Interpreting findings
 

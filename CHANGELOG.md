@@ -24,6 +24,7 @@ All notable changes are documented here. The project follows Semantic Versioning
 - Expanded Markdown reports with applicability and confidence columns.
 - Upgraded the test toolchain to patched releases.
 - Reduced false positives by scoping ambiguous SDK rules and excluding generated/vendor source.
+- Made Python dependency checks aware of the stable v2 boundary and external FastMCP package.
 
 ### Security
 
