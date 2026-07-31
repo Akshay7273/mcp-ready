@@ -1,0 +1,30 @@
+name: Feature or rule request
+description: Propose a detection rule, report format, integration, or workflow improvement.
+title: "feature: "
+labels: [enhancement, needs-triage]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Migration problem
+      description: What maintainer problem should mcp-ready solve?
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Specification or SDK evidence
+      description: Link to authoritative documentation, changelog text, or migration guidance.
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed behavior
+      description: Include expected severity, confidence, and examples when proposing a rule.
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered

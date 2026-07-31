@@ -1,0 +1,44 @@
+name: Bug report
+description: Report incorrect CLI, reporting, detection, or GitHub Action behavior.
+title: "bug: "
+labels: [bug, needs-triage]
+body:
+  - type: markdown
+    attributes:
+      value: Thanks for helping make MCP migrations safer. Please remove secrets from output.
+  - type: input
+    id: version
+    attributes:
+      label: mcp-ready version
+      placeholder: "0.2.0"
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: Runtime and operating system
+      placeholder: "Node 22.14.0 on Ubuntu 24.04"
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Minimal reproduction
+      description: Include the command, minimal source or public repository, and relevant output.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Checks
+      options:
+        - label: I tested the latest published version.
+          required: true
+        - label: I removed credentials and private source code from this report.
+          required: true
