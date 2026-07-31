@@ -4,7 +4,7 @@ import pc from "picocolors"
 import { buildScanContext } from "./detect.js"
 import { hasBreaking, printReport, renderMarkdown } from "./report.js"
 import { rules } from "./rules/index.js"
-import type { Finding } from "./types.js"
+import { runRules } from "./scan.js"
 
 const VERSION = "0.1.0"
 
@@ -61,10 +61,7 @@ async function main(): Promise<void> {
     }
   }
 
-  const findings: Finding[] = []
-  for (const rule of rules) {
-    findings.push(...(await rule.check(ctx)))
-  }
+  const findings = await runRules(ctx, rules)
 
   printReport(findings)
   console.log(pc.dim(`Scanned ${ctx.files.length} files with ${rules.length} rules.\n`))

@@ -15,6 +15,12 @@ const COLOR: Record<Severity, (s: string) => string> = {
   info: pc.cyan,
 }
 
+const ERA_LABEL = {
+  legacy: "legacy (through 2025-11-25)",
+  modern: "2026-07-28",
+  both: "all protocol eras",
+} as const
+
 export function groupBySeverity(findings: Finding[]): Map<Severity, Finding[]> {
   const groups = new Map<Severity, Finding[]>()
   for (const sev of ORDER) groups.set(sev, [])
@@ -36,7 +42,9 @@ export function printReport(findings: Finding[]): void {
     console.log(COLOR[sev](pc.bold(`\n${LABEL[sev]} (${list.length})`)))
     for (const f of list) {
       const loc = f.line ? `${f.file}:${f.line}` : f.file
-      console.log(`  ${pc.bold(f.ruleId)}  ${pc.dim(loc)}`)
+      console.log(
+        `  ${pc.bold(f.ruleId)}  ${pc.dim(loc)}  ${pc.dim(`${ERA_LABEL[f.protocolEra]} · ${f.confidence} confidence`)}`,
+      )
       console.log(`      ${f.message}`)
       if (f.fixHint) console.log(pc.dim(`      ↪ fix: ${f.fixHint}`))
       if (f.docsUrl) console.log(pc.dim(`      ↪ docs: ${f.docsUrl}`))
@@ -62,10 +70,15 @@ export function renderMarkdown(findings: Finding[], target: string): string {
     const list = groups.get(sev) ?? []
     if (list.length === 0) continue
     lines.push(`## ${LABEL[sev]} (${list.length})`, "")
-    lines.push("| Rule | Location | Problem |", "| --- | --- | --- |")
+    lines.push(
+      "| Rule | Location | Applies to | Confidence | Problem |",
+      "| --- | --- | --- | --- | --- |",
+    )
     for (const f of list) {
       const loc = f.line ? `${f.file}:${f.line}` : f.file
-      lines.push(`| \`${f.ruleId}\` | \`${loc}\` | ${f.message} |`)
+      lines.push(
+        `| \`${f.ruleId}\` | \`${loc}\` | ${ERA_LABEL[f.protocolEra]} | ${f.confidence} | ${f.message} |`,
+      )
     }
     lines.push("")
   }

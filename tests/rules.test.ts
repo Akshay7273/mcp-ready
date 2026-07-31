@@ -1,15 +1,12 @@
 import { describe, expect, it } from "vitest"
 import { buildScanContext } from "../src/detect.js"
 import { rules } from "../src/rules/index.js"
+import { runRules } from "../src/scan.js"
 import type { Finding } from "../src/types.js"
 
 async function scan(dir: string): Promise<Finding[]> {
   const ctx = await buildScanContext(dir)
-  const findings: Finding[] = []
-  for (const rule of rules) {
-    findings.push(...(await rule.check(ctx)))
-  }
-  return findings
+  return runRules(ctx, rules)
 }
 
 describe("mcp-ready rules", () => {
@@ -34,5 +31,12 @@ describe("mcp-ready rules", () => {
   it("skips test files entirely", async () => {
     const findings = await scan("fixtures/ts-testfiles")
     expect(findings).toHaveLength(0)
+  })
+
+  it("attaches protocol applicability and confidence to every finding", async () => {
+    const findings = await scan("fixtures/ts-violations")
+    expect(findings.length).toBeGreaterThan(0)
+    expect(findings.every((f) => f.protocolEra === "modern")).toBe(true)
+    expect(findings.every((f) => ["high", "medium", "low"].includes(f.confidence))).toBe(true)
   })
 })

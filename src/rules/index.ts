@@ -1,4 +1,4 @@
-import type { Finding, Rule } from "../types.js"
+import type { FindingDraft, Rule } from "../types.js"
 import { searchSourceFiles } from "./util.js"
 
 const DOCS = {
@@ -17,11 +17,13 @@ const tsMonolithSdk: Rule = {
   id: "ts-monolith-sdk",
   severity: "breaking",
   description: "Monolithic @modelcontextprotocol/sdk is replaced by split packages in v2",
+  protocolEra: "modern",
+  confidence: "high",
   check(ctx) {
     return ctx.sdks
       .filter((s) => s.packageName === "@modelcontextprotocol/sdk")
       .map(
-        (s): Finding => ({
+        (s): FindingDraft => ({
           ruleId: "ts-monolith-sdk",
           severity: "breaking",
           message: `Monolithic @modelcontextprotocol/sdk (${s.versionRange ?? "unversioned"}) detected. v2 splits it into @modelcontextprotocol/server, @modelcontextprotocol/client, and @modelcontextprotocol/core (Node 20+, ESM and CommonJS).`,
@@ -37,10 +39,12 @@ const errorCode32002: Rule = {
   id: "error-code-32002",
   severity: "breaking",
   description: "Resource-not-found error code changed from -32002 to -32602",
+  protocolEra: "modern",
+  confidence: "high",
   async check(ctx) {
     const matches = await searchSourceFiles(ctx, /-32002\b/)
     return matches.map(
-      (m): Finding => ({
+      (m): FindingDraft => ({
         ruleId: "error-code-32002",
         severity: "breaking",
         message:
@@ -58,10 +62,12 @@ const sessionAssumptions: Rule = {
   id: "session-assumptions",
   severity: "breaking",
   description: "Session headers are removed by the stateless core rework",
+  protocolEra: "modern",
+  confidence: "high",
   async check(ctx) {
     const matches = await searchSourceFiles(ctx, /mcp-session-id/i)
     return matches.map(
-      (m): Finding => ({
+      (m): FindingDraft => ({
         ruleId: "session-assumptions",
         severity: "breaking",
         message:
@@ -79,10 +85,12 @@ const pySdkV1: Rule = {
   id: "py-sdk-v1",
   severity: "breaking",
   description: "FastMCP is renamed to MCPServer in mcp v2",
+  protocolEra: "modern",
+  confidence: "high",
   async check(ctx) {
     const matches = await searchSourceFiles(ctx, /\bFastMCP\b/, (f) => f.endsWith(".py"))
     return matches.map(
-      (m): Finding => ({
+      (m): FindingDraft => ({
         ruleId: "py-sdk-v1",
         severity: "breaking",
         message:
@@ -104,13 +112,15 @@ const deprecatedRoots: Rule = {
   id: "deprecated-roots",
   severity: "deprecated",
   description: "Roots are deprecated in the 2026-07-28 revision",
+  protocolEra: "modern",
+  confidence: "high",
   async check(ctx) {
     const matches = await searchSourceFiles(
       ctx,
       /roots\/list|\.listRoots\s*\(|list_roots\s*\(|RootsCapability/,
     )
     return matches.map(
-      (m): Finding => ({
+      (m): FindingDraft => ({
         ruleId: "deprecated-roots",
         severity: "deprecated",
         message:
@@ -127,13 +137,15 @@ const deprecatedSampling: Rule = {
   id: "deprecated-sampling",
   severity: "deprecated",
   description: "Sampling is deprecated in the 2026-07-28 revision",
+  protocolEra: "modern",
+  confidence: "high",
   async check(ctx) {
     const matches = await searchSourceFiles(
       ctx,
       /sampling\/createMessage|\.createMessage\s*\(|create_message\s*\(|SamplingCapability/,
     )
     return matches.map(
-      (m): Finding => ({
+      (m): FindingDraft => ({
         ruleId: "deprecated-sampling",
         severity: "deprecated",
         message:
@@ -150,13 +162,15 @@ const deprecatedLogging: Rule = {
   id: "deprecated-logging",
   severity: "deprecated",
   description: "MCP logging capability is deprecated in the 2026-07-28 revision",
+  protocolEra: "modern",
+  confidence: "high",
   async check(ctx) {
     const matches = await searchSourceFiles(
       ctx,
       /logging\/setLevel|sendLoggingMessage|LoggingMessageNotification/,
     )
     return matches.map(
-      (m): Finding => ({
+      (m): FindingDraft => ({
         ruleId: "deprecated-logging",
         severity: "deprecated",
         message:
@@ -173,13 +187,15 @@ const pyUnboundedDep: Rule = {
   id: "py-unbounded-dep",
   severity: "deprecated",
   description: "Python mcp dependency without an upper version bound",
+  protocolEra: "modern",
+  confidence: "medium",
   check(ctx) {
     return ctx.sdks
       .filter(
         (s) => s.language === "python" && (!s.versionRange || !s.versionRange.includes("<")),
       )
       .map(
-        (s): Finding => ({
+        (s): FindingDraft => ({
           ruleId: "py-unbounded-dep",
           severity: "deprecated",
           message: `Python dependency on "mcp" has no upper version bound (${s.versionRange ?? "no constraint"}). Pin it so the v2 stable release does not surprise your users.`,
@@ -199,6 +215,8 @@ const schema202012: Rule = {
   id: "schema-2020-12",
   severity: "info",
   description: "Tool schemas may use full JSON Schema 2020-12 in the new revision",
+  protocolEra: "modern",
+  confidence: "low",
   async check(ctx) {
     const matches = await searchSourceFiles(ctx, /inputSchema|input_schema/)
     if (matches.length === 0) return []

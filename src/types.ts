@@ -1,5 +1,9 @@
 export type Severity = "breaking" | "deprecated" | "info"
 
+export type ProtocolEra = "legacy" | "modern" | "both"
+
+export type Confidence = "high" | "medium" | "low"
+
 export type Language = "typescript" | "javascript" | "python" | "go" | "csharp" | "unknown"
 
 export type SdkInfo = {
@@ -20,7 +24,13 @@ export type Finding = {
   line?: number
   fixHint?: string
   docsUrl?: string
+  /** Protocol era where the finding matters. Modern means 2026-07-28. */
+  protocolEra: ProtocolEra
+  /** Static-analysis certainty for this finding. */
+  confidence: Confidence
 }
+
+export type FindingDraft = Omit<Finding, "protocolEra" | "confidence">
 
 export type ScanContext = {
   rootDir: string
@@ -35,7 +45,9 @@ export type Rule = {
   id: string
   severity: Severity
   description: string
+  protocolEra: ProtocolEra
+  confidence: Confidence
   /** Which languages this rule applies to; omit for all */
   languages?: Language[]
-  check: (ctx: ScanContext) => Promise<Finding[]> | Finding[]
+  check: (ctx: ScanContext) => Promise<FindingDraft[]> | FindingDraft[]
 }
