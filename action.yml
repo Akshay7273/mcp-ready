@@ -15,7 +15,8 @@ inputs:
   package-version:
     description: "Exact @akshay7273/mcp-ready version to execute"
     required: false
-    default: "0.3.0"
+    # Advance only after the matching npm package is publicly available.
+    default: "0.2.0"
 runs:
   using: "composite"
   steps:
