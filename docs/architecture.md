@@ -10,7 +10,7 @@ target repository's dependencies, imports its modules, or executes its scripts.
    files, and detects MCP SDK dependencies.
 3. Rules under `src/rules/` inspect the cached manifest and source text.
 4. `src/scan.ts` attaches each rule's protocol-era and confidence metadata to its findings.
-5. `src/report.ts` renders the same findings as terminal, Markdown, or versioned JSON output.
+5. `src/report.ts` renders the same findings as terminal, Markdown, versioned JSON, or SARIF 2.1.0.
 6. The CLI applies the configured failure threshold without changing the report contents.
 
 This separation keeps detection independent from presentation and gives CI consumers a stable
@@ -27,6 +27,7 @@ The scan target is treated as untrusted input.
 - Terminal control characters and Markdown table metacharacters are escaped in human-readable
   reports.
 - JSON output relies on the platform serializer and has an explicit schema version.
+- SARIF paths are repository-relative URIs; local absolute paths are not exposed.
 
 See `SECURITY.md` for private reporting instructions.
 

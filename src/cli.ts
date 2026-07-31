@@ -3,7 +3,7 @@ import { writeFile } from "node:fs/promises"
 import pc from "picocolors"
 import { parseCliOptions } from "./cli-options.js"
 import { buildScanContext } from "./detect.js"
-import { printReport, renderJson, renderMarkdown, shouldFail } from "./report.js"
+import { printReport, renderJson, renderMarkdown, renderSarif, shouldFail } from "./report.js"
 import { rules } from "./rules/index.js"
 import { runRules } from "./scan.js"
 import { VERSION } from "./version.js"
@@ -19,9 +19,9 @@ Arguments:
   path            Directory to scan (default: current directory)
 
 Options:
-  --format <type> Output format: terminal, markdown, or json
+  --format <type> Output format: terminal, markdown, json, or sarif
   --json          Alias for --format json
-  --output, -o    Write markdown or JSON output to a file
+  --output, -o    Write Markdown, JSON, or SARIF output to a file
   --fail-on       Failure threshold: breaking, deprecated, or none
   --md            Also write mcp-ready-report.md (legacy convenience option)
   -h, --help      Show this help
@@ -75,8 +75,10 @@ async function main(): Promise<void> {
     console.log(pc.dim(`Scanned ${ctx.files.length} files with ${rules.length} rules.\n`))
   } else if (options.format === "markdown") {
     rendered = renderMarkdown(findings, target)
-  } else {
+  } else if (options.format === "json") {
     rendered = renderJson(findings, target, ctx.sdks, VERSION)
+  } else {
+    rendered = renderSarif(findings, rules, VERSION)
   }
 
   if (rendered && options.output) {
