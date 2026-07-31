@@ -23,6 +23,14 @@ describe("CLI options", () => {
     })
   })
 
+  it("accepts SARIF output", () => {
+    expect(parseCliOptions(["repo", "--format", "sarif", "-o", "results.sarif"])).toMatchObject({
+      target: "repo",
+      format: "sarif",
+      output: "results.sarif",
+    })
+  })
+
   it("rejects unknown options and terminal file output", () => {
     expect(() => parseCliOptions(["--wat"])).toThrow("Unknown option")
     expect(() => parseCliOptions(["--output", "report.txt"])).toThrow(

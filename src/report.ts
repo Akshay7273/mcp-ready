@@ -1,6 +1,6 @@
 import pc from "picocolors"
 import type { FailOn } from "./cli-options.js"
-import type { Finding, SdkInfo, Severity } from "./types.js"
+import type { Finding, Rule, SdkInfo, Severity } from "./types.js"
 
 const ORDER: Severity[] = ["breaking", "deprecated", "info"]
 
@@ -155,4 +155,112 @@ export function renderJson(
   version: string,
 ): string {
   return JSON.stringify(buildJsonReport(findings, target, sdks, version), null, 2)
+}
+
+type SarifLevel = "error" | "warning" | "note"
+
+const SARIF_LEVEL: Record<Severity, SarifLevel> = {
+  breaking: "error",
+  deprecated: "warning",
+  info: "note",
+}
+
+function sarifUri(file: string): string {
+  return file
+    .replace(/\\/g, "/")
+    .split("/")
+    .map((segment) => encodeURIComponent(segment))
+    .join("/")
+}
+
+export type SarifReport = {
+  $schema: "https://json.schemastore.org/sarif-2.1.0.json"
+  version: "2.1.0"
+  runs: Array<{
+    tool: {
+      driver: {
+        name: "mcp-ready"
+        version: string
+        informationUri: string
+        rules: Array<Record<string, unknown>>
+      }
+    }
+    results: Array<Record<string, unknown>>
+  }>
+}
+
+/** Build deterministic SARIF 2.1.0 for GitHub code scanning and other consumers. */
+export function buildSarifReport(
+  findings: Finding[],
+  availableRules: Rule[],
+  version: string,
+): SarifReport {
+  const ruleIndex = new Map(availableRules.map((rule, index) => [rule.id, index]))
+  const descriptors = availableRules.map((rule) => ({
+    id: rule.id,
+    name: rule.id,
+    shortDescription: { text: rule.description },
+    defaultConfiguration: { level: SARIF_LEVEL[rule.severity] },
+    properties: {
+      severity: rule.severity,
+      protocolEra: rule.protocolEra,
+      confidence: rule.confidence,
+      tags: ["mcp", "migration", rule.severity],
+    },
+  }))
+
+  const results = findings.map((finding) => {
+    const properties: Record<string, string> = {
+      severity: finding.severity,
+      protocolEra: finding.protocolEra,
+      confidence: finding.confidence,
+    }
+    if (finding.fixHint) properties.fixHint = finding.fixHint
+    if (finding.docsUrl) properties.docsUrl = finding.docsUrl
+
+    return {
+      ruleId: finding.ruleId,
+      ruleIndex: ruleIndex.get(finding.ruleId),
+      level: SARIF_LEVEL[finding.severity],
+      message: { text: finding.message },
+      locations: [
+        {
+          physicalLocation: {
+            artifactLocation: {
+              uri: sarifUri(finding.file),
+              uriBaseId: "%SRCROOT%",
+            },
+            ...(finding.line ? { region: { startLine: finding.line } } : {}),
+          },
+        },
+      ],
+      properties,
+    }
+  })
+
+  return {
+    $schema: "https://json.schemastore.org/sarif-2.1.0.json",
+    version: "2.1.0",
+    runs: [
+      {
+        tool: {
+          driver: {
+            name: "mcp-ready",
+            version,
+            informationUri: "https://github.com/Akshay7273/mcp-ready",
+            rules: descriptors,
+          },
+        },
+        results,
+      },
+    ],
+  }
+}
+
+export function renderSarif(
+  findings: Finding[],
+  availableRules: Rule[],
+  version: string,
+): string {
+  return JSON.stringify(buildSarifReport(findings, availableRules, version), null, 2)
 }

@@ -1,4 +1,4 @@
-export type OutputFormat = "terminal" | "markdown" | "json"
+export type OutputFormat = "terminal" | "markdown" | "json" | "sarif"
 export type FailOn = "breaking" | "deprecated" | "none"
 
 export type CliOptions = {
@@ -9,7 +9,7 @@ export type CliOptions = {
   legacyMarkdown: boolean
 }
 
-const FORMATS = new Set<OutputFormat>(["terminal", "markdown", "json"])
+const FORMATS = new Set<OutputFormat>(["terminal", "markdown", "json", "sarif"])
 const FAIL_LEVELS = new Set<FailOn>(["breaking", "deprecated", "none"])
 
 function valueAfter(args: string[], index: number, option: string): string {
@@ -56,7 +56,7 @@ export function parseCliOptions(args: string[]): CliOptions {
   }
 
   if (output && format === "terminal") {
-    throw new Error("--output requires --format markdown or --format json")
+    throw new Error("--output requires --format markdown, json, or sarif")
   }
 
   return { target, format, output, failOn, legacyMarkdown }
