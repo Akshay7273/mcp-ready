@@ -6,8 +6,7 @@ import { buildScanContext } from "./detect.js"
 import { printReport, renderJson, renderMarkdown, shouldFail } from "./report.js"
 import { rules } from "./rules/index.js"
 import { runRules } from "./scan.js"
-
-const VERSION = "0.1.0"
+import { VERSION } from "./version.js"
 
 function printHelp(): void {
   console.log(`

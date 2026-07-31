@@ -3,7 +3,7 @@
 
 > Is your MCP server ready for the **2026-07-28 spec**? Find breaking changes and deprecated features — before they find you.
 
-🚧 **v0.1 in active development** — support for the final **2026-07-28** specification is being expanded for v0.2.
+🚧 **v0.2 release candidate** — final **2026-07-28** specification rules are being validated against real-world MCP servers.
 
 The Model Context Protocol's 2026-07-28 revision is its largest ever: a stateless core, a new `server/discover` capability-discovery method, deprecated roots/sampling/logging, new SDK major versions, and changed error handling. `mcp-ready` scans your MCP server repo — **TypeScript, Python, Go, or C#** — and tells you exactly what needs attention. In seconds. Zero config.
 
