@@ -4,6 +4,8 @@ All notable changes are documented here. The project follows Semantic Versioning
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-07-31
+
 ### Added
 
 - SARIF 2.1.0 output with deterministic rule metadata and GitHub code-scanning locations.
@@ -55,6 +57,7 @@ All notable changes are documented here. The project follows Semantic Versioning
 - Nine migration rules with terminal and Markdown reporting.
 - Composite GitHub Action and initial CI workflow.
 
-[Unreleased]: https://github.com/Akshay7273/mcp-ready/compare/v0.2.0...HEAD
+[Unreleased]: https://github.com/Akshay7273/mcp-ready/compare/v0.3.0...HEAD
+[0.3.0]: https://github.com/Akshay7273/mcp-ready/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/Akshay7273/mcp-ready/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/Akshay7273/mcp-ready/releases/tag/v0.1.0
