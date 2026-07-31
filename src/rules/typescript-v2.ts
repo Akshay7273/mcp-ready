@@ -6,6 +6,8 @@ const MIGRATION_GUIDE =
   "https://github.com/modelcontextprotocol/typescript-sdk/blob/main/docs/migration/upgrade-to-v2.md"
 
 const isTypeScriptSource = (file: string): boolean => /\.[cm]?[jt]sx?$/.test(file)
+const importsMcpSdk = (content: string): boolean =>
+  /(?:from\s*|require\(\s*|import\(\s*)["']@modelcontextprotocol\//.test(content)
 
 function migrationFinding(
   ruleId: string,
@@ -82,6 +84,7 @@ const variadicRegistration: Rule = {
       ctx,
       /\b(?:server|mcp)\.(?:tool|prompt|resource)\s*\(/,
       isTypeScriptSource,
+      importsMcpSdk,
     )
     return matches.map((match) =>
       migrationFinding(
@@ -130,6 +133,7 @@ const legacyHandlerContext: Rule = {
       ctx,
       /\bextra\.(?:requestInfo|sendNotification|sendRequest|authInfo|signal|sessionId)\b|\bRequestHandlerExtra\b/,
       isTypeScriptSource,
+      importsMcpSdk,
     )
     return matches.map((match) =>
       migrationFinding(
@@ -154,6 +158,7 @@ const legacyErrorApi: Rule = {
       ctx,
       /\b(?:McpError|ErrorCode|StreamableHTTPError)\b/,
       isTypeScriptSource,
+      importsMcpSdk,
     )
     return matches.map((match) =>
       migrationFinding(

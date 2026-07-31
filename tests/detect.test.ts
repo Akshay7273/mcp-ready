@@ -39,4 +39,9 @@ describe("SDK detection", () => {
     const ctx = await buildScanContext("fixtures/module-extensions")
     expect(ctx.files).toEqual(["client.cts", "component.jsx", "server.mts"])
   })
+
+  it("skips generated bundles and vendored source", async () => {
+    const ctx = await buildScanContext("fixtures/ignored-source")
+    expect(ctx.files).toEqual([])
+  })
 })

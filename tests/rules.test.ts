@@ -20,7 +20,7 @@ describe("mcp-ready rules", () => {
 
   it("flags the monolithic TS SDK", async () => {
     const findings = await scan("fixtures/ts-old-sdk")
-    expect(findings.map((f) => f.ruleId)).toContain("ts-monolith-sdk")
+    expect(findings.map((f) => f.ruleId)).toEqual(["ts-monolith-sdk"])
   })
 
   it("flags an unbounded python mcp dependency", async () => {

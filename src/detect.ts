@@ -13,6 +13,12 @@ const IGNORE = [
   "**/__pycache__/**",
   "**/bin/**",
   "**/obj/**",
+  "**/vendor/**",
+  "**/vendored/**",
+  "**/third_party/**",
+  "**/third-party/**",
+  "**/*.bundle.{js,mjs,cjs}",
+  "**/*.min.js",
 ]
 
 const FILE_PATTERNS = [

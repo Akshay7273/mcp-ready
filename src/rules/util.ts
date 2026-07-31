@@ -37,11 +37,13 @@ export async function searchSourceFiles(
   ctx: ScanContext,
   pattern: RegExp,
   fileFilter: (file: string) => boolean = isSourceFile,
+  contentFilter: (content: string) => boolean = () => true,
 ): Promise<FileMatch[]> {
   const matches: FileMatch[] = []
   for (const file of ctx.files) {
     if (isTestFile(file) || !fileFilter(file)) continue
     const text = await ctx.read(file)
+    if (!contentFilter(text)) continue
     const lines = text.split("\n")
     for (let i = 0; i < lines.length; i++) {
       if (pattern.test(lines[i])) {
