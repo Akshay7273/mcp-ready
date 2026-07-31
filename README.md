@@ -37,6 +37,10 @@ all remediation metadata.
 SARIF reports map findings to source locations and stable rule descriptors for code-scanning
 systems. See the [SARIF integration guide](docs/sarif.md) for a complete GitHub workflow.
 
+Existing repositories can check in a reviewed baseline while keeping new findings actionable.
+Suppressions require an exact rule/file scope and a written reason. See the
+[baseline and suppression guide](docs/policy.md).
+
 ## Use in CI (GitHub Action)
 
 ```yaml

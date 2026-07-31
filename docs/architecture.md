@@ -10,8 +10,10 @@ target repository's dependencies, imports its modules, or executes its scripts.
    files, and detects MCP SDK dependencies.
 3. Rules under `src/rules/` inspect the cached manifest and source text.
 4. `src/scan.ts` attaches each rule's protocol-era and confidence metadata to its findings.
-5. `src/report.ts` renders the same findings as terminal, Markdown, versioned JSON, or SARIF 2.1.0.
-6. The CLI applies the configured failure threshold without changing the report contents.
+5. `src/policy.ts` classifies exact suppressions, baseline matches, and stale baseline entries.
+6. `src/report.ts` renders active and accepted findings as terminal, Markdown, versioned JSON, or
+   SARIF 2.1.0.
+7. The CLI applies the configured failure threshold to active findings only.
 
 This separation keeps detection independent from presentation and gives CI consumers a stable
 place to integrate.
@@ -23,6 +25,7 @@ The scan target is treated as untrusted input.
 - The target must exist and must be a directory.
 - Symbolic links are not followed during discovery.
 - Every cached read is resolved and checked against the target boundary.
+- Repository-controlled configuration cannot read a baseline outside the target boundary.
 - Source code and package lifecycle scripts are never executed.
 - Terminal control characters and Markdown table metacharacters are escaped in human-readable
   reports.
