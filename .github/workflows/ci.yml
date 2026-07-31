@@ -45,6 +45,10 @@ jobs:
         run: |
           node dist/cli.js fixtures/ts-v2-hazards --format json --fail-on none --output report.json
           node -e "JSON.parse(require('node:fs').readFileSync('report.json', 'utf8'))"
+      - name: SARIF report must be valid JSON with the expected version
+        run: |
+          node dist/cli.js fixtures/ts-v2-hazards --format sarif --fail-on none --output results.sarif
+          node -e "const r=JSON.parse(require('node:fs').readFileSync('results.sarif','utf8')); if(r.version!=='2.1.0'||!Array.isArray(r.runs)) process.exit(1)"
 
   action-smoke:
     name: Composite Action

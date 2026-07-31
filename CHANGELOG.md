@@ -4,6 +4,16 @@ All notable changes are documented here. The project follows Semantic Versioning
 
 ## [Unreleased]
 
+### Added
+
+- SARIF 2.1.0 output with deterministic rule metadata and GitHub code-scanning locations.
+- GitHub Action job summaries with configurable failure thresholds.
+
+### Changed
+
+- Upgraded official GitHub Actions to their Node 24 releases.
+- Kept major development-dependency upgrades independently reviewable in Dependabot.
+
 ## [0.2.0] - 2026-07-31
 
 ### Added
