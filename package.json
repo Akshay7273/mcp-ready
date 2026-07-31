@@ -4,7 +4,7 @@
   "description": "Check whether your MCP server is ready for the MCP 2026-07-28 spec revision — breaking changes, deprecated features, migration hints.",
   "type": "module",
   "bin": {
-    "mcp-ready": "./dist/cli.js"
+    "mcp-ready": "dist/cli.js"
   },
   "files": [
     "dist",
